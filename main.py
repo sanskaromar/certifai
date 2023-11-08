@@ -1,4 +1,6 @@
 import os
+import csv
+import time
 from pptx import Presentation
 import comtypes.client
 
@@ -9,40 +11,71 @@ def PPT_to_PDF(input_pptx, output_pdf, formatType=32):
 
     if output_pdf[-3:] != "pdf":
         output_pdf = output_pdf + ".pdf"
-    deck = powerpoint.Presentations.Open(input_pptx)
+    deck = powerpoint.Presentations.Open(input_pptx, WithWindow=False)
     deck.SaveAs(output_pdf, formatType)  # formatType = 32 for ppt to pdf
     deck.Close()
     powerpoint.Quit()
 
 
-# Load the existing PowerPoint presentation
-input_pptx = "existing_presentation.pptx"
-output_pdf = "output_presentation.pdf"
+def process_pptx(row, save_pptx=False):
+    # Load the existing PowerPoint presentation
+    input_pptx = "certificate_template.pptx"
 
-base_path = os.path.dirname(os.path.abspath(__file__))
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    output_folder = os.path.join(base_path, "certificates_pdf")
 
-prs = Presentation(input_pptx)
+    prs = Presentation(input_pptx)
 
-# Define the placeholder text to replace
-placeholder_name = "Placeholder_Name"
+    # Define the placeholders to replace
+    placeholders = {
+        "Placeholder_Name": row["name"],
+        "Placeholder_refno": row["id"],
+    }
 
-# Get user input for the replacement name
-replacement_name = input("Enter the name to replace '{}': ".format(placeholder_name))
+    # Iterate through slides and shapes to find and replace the placeholders
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                for paragraph in shape.text_frame.paragraphs:
+                    for run in paragraph.runs:
+                        for placeholder, value in placeholders.items():
+                            if placeholder in run.text:
+                                run.text = run.text.replace(placeholder, value)
 
-# Iterate through slides and shapes to find and replace the placeholder text
-for slide in prs.slides:
-    for shape in slide.shapes:
-        if shape.has_text_frame:
-            for paragraph in shape.text_frame.paragraphs:
-                for run in paragraph.runs:
-                    if placeholder_name in run.text:
-                        run.text = run.text.replace(placeholder_name, replacement_name)
+    # Save the modified PowerPoint presentation
+    updated_pptx = f"{row['id']}_presentation.pptx"
 
-# Save the modified PowerPoint presentation
-updated_pptx = "updated_presentation.pptx"
-prs.save(updated_pptx)
+    if save_pptx:
+        output_folder = os.path.join(base_path, "certificates_pptx")
+        output_pptx = os.path.join(output_folder, updated_pptx)
+        prs.save(output_pptx)
 
-# Convert the updated PowerPoint presentation to PDF
-PPT_to_PDF(os.path.join(base_path, updated_pptx), os.path.join(base_path, output_pdf))
+    # Convert the updated PowerPoint presentation to PDF
+    output_pdf = os.path.join(output_folder, f"{row['id']}.pdf")
+    PPT_to_PDF(updated_pptx, output_pdf)
 
-print(f"The presentation has been updated and saved as '{updated_pptx}'.")
+    print(f"Certificate for {row['name']} has been saved as '{output_pdf}'.")
+
+
+def main():
+    # Load data from CSV file
+    csv_file = "data.csv"
+    start_time = time.time()
+    with open(csv_file, mode="r") as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            print("Generating certificate for {}...".format(row["name"]))
+            # Generate certificate for each row
+            process_pptx(row)
+
+    time_elapsed = time.time() - start_time
+    print(
+        "Time elapsed for generating {} certificates: {:.2f} seconds.".format(
+            reader.line_num - 1, time_elapsed
+        )
+    )
+    print("All certificates have been generated.")
+
+
+if __name__ == "__main__":
+    main()
