@@ -17,12 +17,15 @@ def PPT_to_PDF(input_pptx, output_pdf, formatType=32):
     powerpoint.Quit()
 
 
-def process_pptx(row, save_pptx=False):
+def process_pptx(row):
     # Load the existing PowerPoint presentation
     input_pptx = "certificate_template.pptx"
 
     base_path = os.path.dirname(os.path.abspath(__file__))
     output_folder = os.path.join(base_path, "certificates_pdf")
+    pptx_output_folder = os.path.join(base_path, "certificates_pptx")
+    os.makedirs(output_folder, exist_ok=True)
+    os.makedirs(pptx_output_folder, exist_ok=True)
 
     prs = Presentation(input_pptx)
 
@@ -43,12 +46,8 @@ def process_pptx(row, save_pptx=False):
                                 run.text = run.text.replace(placeholder, value)
 
     # Save the modified PowerPoint presentation
-    updated_pptx = f"{row['id']}_presentation.pptx"
-
-    if save_pptx:
-        output_folder = os.path.join(base_path, "certificates_pptx")
-        output_pptx = os.path.join(output_folder, updated_pptx)
-        prs.save(output_pptx)
+    updated_pptx = os.path.join(pptx_output_folder, f"{row['id']}.pptx")
+    prs.save(updated_pptx)
 
     # Convert the updated PowerPoint presentation to PDF
     output_pdf = os.path.join(output_folder, f"{row['id']}.pdf")
