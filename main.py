@@ -1,8 +1,11 @@
 import os
 import csv
 import time
+import pandas as pd
 from pptx import Presentation
 import comtypes.client
+
+pd.options.mode.chained_assignment = None  # default='warn'
 
 
 def PPT_to_PDF(input_pptx, output_pdf, formatType=32):
@@ -56,21 +59,42 @@ def process_pptx(row):
     print(f"Certificate for {row['name']} has been saved as '{output_pdf}'.")
 
 
+def generate_certificates_summary(df):
+    """
+    Generate a Markdown file with a summary of the certificates generated.
+    Can be used to validate the certificates generated.
+    """
+    certificates_md = "certificates.md"
+    # Create a DataFrame for the Markdown table
+    df_md = df[["id", "name", "profile_url"]]
+    df_md["profile_url"] = df_md["profile_url"].apply(
+        lambda x: f"[Link]({x})" if pd.notna(x) else ""
+    )
+
+    # Write the DataFrame to the Markdown file
+    with open(certificates_md, mode="w", newline="") as md_file:
+        md_file.write("# Certificates\n")
+        time_now = time.strftime("%d %B %Y, %H:%M:%S", time.localtime())
+        md_file.write(f"Generated on {time_now}\n\n")
+        df_md.to_markdown(md_file, index=False)
+
+
 def main():
+    start_time = time.time()
     # Load data from CSV file
     csv_file = "data.csv"
-    start_time = time.time()
-    with open(csv_file, mode="r") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            print("Generating certificate for {}...".format(row["name"]))
-            # Generate certificate for each row
-            process_pptx(row)
+    df = pd.read_csv(csv_file)
+
+    for _, row in df.iterrows():
+        print("Generating certificate for {}...".format(row["name"]))
+        process_pptx(row)
+
+    generate_certificates_summary(df)
 
     time_elapsed = time.time() - start_time
     print(
         "Time elapsed for generating {} certificates: {:.2f} seconds.".format(
-            reader.line_num - 1, time_elapsed
+            len(df), time_elapsed
         )
     )
     print("All certificates have been generated.")
