@@ -5,6 +5,20 @@ The Certifai is a highly customizable Certificate Generator built using Python, 
 
 This README will provide you with detailed instructions on setting up and running the script, giving you full control over your certificate generation process.
 
+### Certificate Verification
+
+Certificates generated using this generator are designed with authenticity in mind. Each certificate contains a reference number, and you can easily verify their authenticity by comparing these reference numbers with the ones listed in the `certificates.md` file. This `certificates.md` file can be hosted anywhere, such as on a website or in a GitHub repository. For example, you can find a real-world example of this in action at [GDSC MNNIT's GitHub repository](https://github.com/gdsc-mnnita/Google-Cloud-Study-Jams/blob/main/GCSJ-23/README.md).
+
+On each certificate, you will find the following information:
+
+- **Certificate Reference Number**: This unique reference number helps you verify the certificate's authenticity.
+- **Link to Repository**: A link to the repository where `certificates.md` is hosted for reference.
+- **QR Code**: The certificate also includes a QR code that links to the candidate's profile URL, where badges and additional information can be viewed.
+
+We have taken care to minimize the public exposure of candidate information to respect their privacy.
+
+This additional information ensures that the generated certificates are not only beautifully designed but also secure and verifiable.
+
 ## Prerequisites
 
 - Python 3.7 or higher
