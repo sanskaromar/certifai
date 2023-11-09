@@ -79,7 +79,8 @@ def process_pptx(row):
         left = Inches(9.5)
         top = Inches(7.4)
         qr_code = Image.open(qr_code_path)
-        slide.shapes.add_picture(qr_code_path, left, top, width=None, height=None)
+        pic = slide.shapes.add_picture(qr_code_path, left, top, width=None, height=None)
+        pic.click_action.hyperlink.address = qr_code_url
 
     # Save the modified PowerPoint presentation
     updated_pptx = os.path.join(pptx_output_folder, f"{row['id']}.pptx")
