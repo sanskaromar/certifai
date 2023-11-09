@@ -5,7 +5,6 @@ data*.csv
 certificates_pdf
 certificates_pptx
 certificates.md
-README.md
 *.png
 qr*.py
 *log*
