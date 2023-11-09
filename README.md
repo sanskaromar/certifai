@@ -106,7 +106,9 @@ For more advanced configuration options, you can modify the Python script direct
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
+This project is licensed under the following License - see the [LICENSE](LICENSE.md) file for details.
+
+TLDR; If you use this project, you must give credits to the author by linking to this repository.
 
 ## Performance
 This Certificate Generator is a powerful tool that efficiently generates certificates from a PowerPoint template. The generation speed is dependent upon your system specs, but it ulitizes multiprocessing to maximize the performance.
@@ -117,3 +119,6 @@ For my actual use case, while generating certificates for [Google Cloud Study Ja
 
 Currently, I have only implemented it for Windows OS and utilized PowerPoint for pptx to PDF conversion. It is possible to implement it in Linux, but that is not done yet. Also, since the tasks here are mostly I/O bound, multithreading may result in even better performance, but that is not implemented as well.
 
+# Example Usage
+
+Please refer to the GDSC MNNIT's [Google Cloud Study Jams repository](https://github.com/gdsc-mnnita/Google-Cloud-Study-Jams/tree/main/GCSJ-23) for an example of how I used this Certificate Generator to generate certificates for the participants of the event.
