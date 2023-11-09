@@ -8,7 +8,8 @@ from pptx.util import Inches
 import qrcode
 from PIL import Image
 import comtypes.client
-from memory_profiler import profile
+
+# from memory_profiler import profile
 
 pd.options.mode.chained_assignment = None  # default='warn'
 input_pptx = "certificate_template.pptx"
@@ -20,7 +21,6 @@ qr_code_folder = os.path.join(base_path, "qr_codes")
 
 def PPT_to_PDF(input_pptx, output_pdf):
     powerpoint = comtypes.client.CreateObject("Powerpoint.Application")
-    powerpoint.Visible = 1
 
     if output_pdf[-3:] != "pdf":
         output_pdf = output_pdf + ".pdf"
@@ -52,7 +52,7 @@ def generate_qr_code(url, output_path):
     img.save(output_path)
 
 
-@profile
+# @profile
 def process_pptx(row):
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(pptx_output_folder, exist_ok=True)
@@ -127,7 +127,7 @@ def main():
         process_pptx(row)
         gc.collect()
 
-    # shutil.rmtree(pptx_output_folder)
+    shutil.rmtree(pptx_output_folder)
     shutil.rmtree(qr_code_folder)
     generate_certificates_summary(df)
 
