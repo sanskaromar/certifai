@@ -10,8 +10,6 @@ from PIL import Image
 import comtypes.client
 from multiprocessing import Pool
 
-# from memory_profiler import profile
-
 pd.options.mode.chained_assignment = None  # default='warn'
 input_pptx = "certificate_template.pptx"
 base_path = os.path.dirname(os.path.abspath(__file__))
@@ -53,7 +51,6 @@ def generate_qr_code(url, output_path):
     img.save(output_path)
 
 
-# @profile
 def process_pptx(row):
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(pptx_output_folder, exist_ok=True)
