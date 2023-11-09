@@ -8,6 +8,7 @@ from pptx.util import Inches
 import qrcode
 from PIL import Image
 import comtypes.client
+from multiprocessing import Pool
 
 # from memory_profiler import profile
 
@@ -59,14 +60,14 @@ def process_pptx(row):
     os.makedirs(qr_code_folder, exist_ok=True)
 
     prs = Presentation(input_pptx)
-    qr_code_url = row["profile_url"]
-    qr_code_path = os.path.join(qr_code_folder, f"{row['id']}.png")
+    qr_code_url = row[3]
+    qr_code_path = os.path.join(qr_code_folder, f"{row[1]}.png")
     generate_qr_code(qr_code_url, qr_code_path)
 
     # Define the placeholders to replace
     placeholders = {
-        "Placeholder_Name": row["name"],
-        "Placeholder_refno": row["id"],
+        "Placeholder_Name": row[2],
+        "Placeholder_refno": row[1],
     }
 
     # Iterate through slides and shapes to find and replace the placeholders
@@ -85,11 +86,11 @@ def process_pptx(row):
         pic.click_action.hyperlink.address = qr_code_url
 
     # Save the modified PowerPoint presentation
-    updated_pptx = os.path.join(pptx_output_folder, f"{row['id']}.pptx")
+    updated_pptx = os.path.join(pptx_output_folder, f"{row[1]}.pptx")
     prs.save(updated_pptx)
 
     # Convert the updated PowerPoint presentation to PDF
-    output_pdf = os.path.join(output_folder, f"{row['id']}.pdf")
+    output_pdf = os.path.join(output_folder, f"{row[1]}.pdf")
     PPT_to_PDF(updated_pptx, output_pdf)
 
     # print(f"Certificate for {row['name']} has been saved as '{output_pdf}'.")
@@ -122,10 +123,9 @@ def main():
     df = pd.read_csv(csv_file)
     print("Generating Certificates...\nPlease wait...")
 
-    for _, row in df.iterrows():
-        # print("Generating certificate for {}...".format(row["id"]))
-        process_pptx(row)
-        gc.collect()
+    # Use multiprocessing Pool to parallelize certificate generation
+    with Pool() as pool:
+        pool.map(process_pptx, df.itertuples(index=False, name=None))
 
     shutil.rmtree(pptx_output_folder)
     shutil.rmtree(qr_code_folder)
