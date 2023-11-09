@@ -1,5 +1,6 @@
 import os
 import time
+import shutil
 import gc
 import pandas as pd
 from pptx import Presentation
@@ -9,6 +10,11 @@ from PIL import Image
 import comtypes.client
 
 pd.options.mode.chained_assignment = None  # default='warn'
+input_pptx = "certificate_template.pptx"
+base_path = os.path.dirname(os.path.abspath(__file__))
+output_folder = os.path.join(base_path, "certificates_pdf")
+pptx_output_folder = os.path.join(base_path, "certificates_pptx")
+qr_code_folder = os.path.join(base_path, "qr_codes")
 
 
 def PPT_to_PDF(input_pptx, output_pdf, formatType=32):
@@ -46,13 +52,6 @@ def generate_qr_code(url, output_path):
 
 
 def process_pptx(row):
-    # Load the existing PowerPoint presentation
-    input_pptx = "certificate_template.pptx"
-
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    output_folder = os.path.join(base_path, "certificates_pdf")
-    pptx_output_folder = os.path.join(base_path, "certificates_pptx")
-    qr_code_folder = os.path.join(base_path, "qr_codes")
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(pptx_output_folder, exist_ok=True)
     os.makedirs(qr_code_folder, exist_ok=True)
@@ -125,6 +124,8 @@ def main():
         process_pptx(row)
         gc.collect()
 
+    shutil.rmtree(pptx_output_folder)
+    shutil.rmtree(qr_code_folder)
     generate_certificates_summary(df)
 
     time_elapsed = time.time() - start_time
