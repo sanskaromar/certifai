@@ -1,12 +1,15 @@
-# Certificate Generator
+# Certifai: Certificate Generator
 
 ## Description
-The Certificate Generator is a Python project that automates the generation of certificates in PDF format from a PowerPoint template with placeholders. It populates placeholders with data from a CSV file, adds QR codes to the certificates, and generates a summary in Markdown format. This README provides instructions on setting up and running the script.
+The Certifai is a highly customizable Certificate Generator built using Python, designed to streamline the certificate generation process. It automates the creation of certificates in PDF format using a PowerPoint template with predefined placeholders. The script pulls data from a CSV file to populate these placeholders, adds QR codes to the certificates, and generates a summary in Markdown format. One of its standout features is the use of multiprocessing, allowing you to harness the power of parallel processing for faster execution.
+
+This README will provide you with detailed instructions on setting up and running the script, giving you full control over your certificate generation process.
 
 ## Prerequisites
 
 - Python 3.7 or higher
 - A virtual environment (optional but recommended)
+- Powerpoint installed on your windows OS
 
 ## Setup
 
@@ -15,7 +18,7 @@ The Certificate Generator is a Python project that automates the generation of c
 2. Create a virtual environment (optional but recommended):
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows, use 'venv\Scripts\activate'
+   venv\Scripts\Activate.ps1
    ```
 
 3. Install the required Python packages:
@@ -74,7 +77,7 @@ The generated certificates and summary will be saved in the following locations:
 
 ### Temporary Generated Folders
 
-Temporary folders are created during script execution and are deleted when the program is closed:
+Temporary folders are created during script execution and are deleted when the program is closed. (You don't have to worry about them.)
 
 - `certificates_pptx/`: Temporary directory for generated PowerPoint certificates.
 - `qr_codes/`: Temporary directory for generated QR codes.
@@ -104,3 +107,13 @@ For more advanced configuration options, you can modify the Python script direct
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
+
+## Performance
+This Certificate Generator is a powerful tool that efficiently generates certificates from a PowerPoint template. The generation speed is dependent upon your system specs, but it ulitizes multiprocessing to maximize the performance.
+
+For my actual use case, while generating certificates for [Google Cloud Study Jams participants from MNNIT](https://github.com/gdsc-mnnita/Google-Cloud-Study-Jams/tree/main/GCSJ-23), it created 103 certificates in just 31 seconds on average.
+
+# Limitations
+
+Currently, I have only implemented it for Windows OS and utilized PowerPoint for pptx to PDF conversion. It is possible to implement it in Linux, but that is not done yet. Also, since the tasks here are mostly I/O bound, multithreading may result in even better performance, but that is not implemented as well.
+
