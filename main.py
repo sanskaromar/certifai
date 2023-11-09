@@ -1,8 +1,11 @@
 import os
-import csv
 import time
+import gc
 import pandas as pd
 from pptx import Presentation
+from pptx.util import Inches
+import qrcode
+from PIL import Image
 import comtypes.client
 
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -20,6 +23,28 @@ def PPT_to_PDF(input_pptx, output_pdf, formatType=32):
     powerpoint.Quit()
 
 
+def generate_qr_code(url, output_path):
+    logo_path = "gcp5.png"
+    logo = Image.open(logo_path)
+    basewidth = 100
+    wpercent = basewidth / float(logo.size[0])
+    hsize = int((float(logo.size[1]) * float(wpercent)))
+    logo = logo.resize((basewidth, hsize), Image.Resampling.LANCZOS)
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_H,
+        box_size=9,
+        border=4,
+    )
+    qr.add_data(url)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color=(85, 101, 111), back_color="white").convert("RGB")
+    pos = ((img.size[0] - logo.size[0]) // 2, (img.size[1] - logo.size[1]) // 2)
+    img.paste(logo, pos)
+    img = img.resize((100, 100), Image.Resampling.LANCZOS)
+    img.save(output_path)
+
+
 def process_pptx(row):
     # Load the existing PowerPoint presentation
     input_pptx = "certificate_template.pptx"
@@ -27,10 +52,15 @@ def process_pptx(row):
     base_path = os.path.dirname(os.path.abspath(__file__))
     output_folder = os.path.join(base_path, "certificates_pdf")
     pptx_output_folder = os.path.join(base_path, "certificates_pptx")
+    qr_code_folder = os.path.join(base_path, "qr_codes")
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(pptx_output_folder, exist_ok=True)
+    os.makedirs(qr_code_folder, exist_ok=True)
 
     prs = Presentation(input_pptx)
+    qr_code_url = row["profile_url"]
+    qr_code_path = os.path.join(qr_code_folder, f"{row['id']}.png")
+    generate_qr_code(qr_code_url, qr_code_path)
 
     # Define the placeholders to replace
     placeholders = {
@@ -47,6 +77,10 @@ def process_pptx(row):
                         for placeholder, value in placeholders.items():
                             if placeholder in run.text:
                                 run.text = run.text.replace(placeholder, value)
+        left = Inches(9.5)
+        top = Inches(7.4)
+        qr_code = Image.open(qr_code_path)
+        slide.shapes.add_picture(qr_code_path, left, top, width=None, height=None)
 
     # Save the modified PowerPoint presentation
     updated_pptx = os.path.join(pptx_output_folder, f"{row['id']}.pptx")
@@ -56,7 +90,7 @@ def process_pptx(row):
     output_pdf = os.path.join(output_folder, f"{row['id']}.pdf")
     PPT_to_PDF(updated_pptx, output_pdf)
 
-    print(f"Certificate for {row['name']} has been saved as '{output_pdf}'.")
+    # print(f"Certificate for {row['name']} has been saved as '{output_pdf}'.")
 
 
 def generate_certificates_summary(df):
@@ -84,10 +118,12 @@ def main():
     # Load data from CSV file
     csv_file = "data.csv"
     df = pd.read_csv(csv_file)
+    print("Generating Certificates...\nPlease wait...")
 
     for _, row in df.iterrows():
-        print("Generating certificate for {}...".format(row["name"]))
+        # print("Generating certificate for {}...".format(row["id"]))
         process_pptx(row)
+        gc.collect()
 
     generate_certificates_summary(df)
 
