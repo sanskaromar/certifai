@@ -17,14 +17,14 @@ pptx_output_folder = os.path.join(base_path, "certificates_pptx")
 qr_code_folder = os.path.join(base_path, "qr_codes")
 
 
-def PPT_to_PDF(input_pptx, output_pdf, formatType=32):
+def PPT_to_PDF(input_pptx, output_pdf):
     powerpoint = comtypes.client.CreateObject("Powerpoint.Application")
     powerpoint.Visible = 1
 
     if output_pdf[-3:] != "pdf":
         output_pdf = output_pdf + ".pdf"
     deck = powerpoint.Presentations.Open(input_pptx, WithWindow=False)
-    deck.SaveAs(output_pdf, formatType)  # formatType = 32 for ppt to pdf
+    deck.ExportAsFixedFormat(output_pdf, FixedFormatType=2)
     deck.Close()
     powerpoint.Quit()
 
@@ -124,7 +124,7 @@ def main():
         process_pptx(row)
         gc.collect()
 
-    shutil.rmtree(pptx_output_folder)
+    # shutil.rmtree(pptx_output_folder)
     shutil.rmtree(qr_code_folder)
     generate_certificates_summary(df)
 
