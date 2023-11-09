@@ -1,7 +1,7 @@
 # Certifai: Certificate Generator
 
 ## Description
-The Certifai is a highly customizable Certificate Generator built using Python, designed to streamline the certificate generation process. It automates the creation of certificates in PDF format using a PowerPoint template with predefined placeholders. The script pulls data from a CSV file to populate these placeholders, adds QR codes to the certificates, and generates a summary in Markdown format. One of its standout features is the use of multiprocessing, allowing you to harness the power of parallel processing for faster execution.
+Certifai is a highly customizable Certificate Generator built using Python, designed to streamline the certificate generation process. It automates the creation of certificates in PDF format using a PowerPoint template with predefined placeholders. The script pulls data from a CSV file to populate these placeholders, adds QR codes to the certificates, and generates a summary in Markdown format. One of its standout features is the use of multiprocessing, allowing you to harness the power of parallel processing for faster execution.
 
 This README will provide you with detailed instructions on setting up and running the script, giving you full control over your certificate generation process.
 
@@ -66,7 +66,7 @@ This additional information ensures that the generated certificates are not only
      ```
      NOTE: The first column email is not necessary an you can have any other column or any constant value in the first column. The initial idea was to mail the certificates to the participants but that is not implemented yet.
 
-## Project Structure
+## Project Structure Explained
 
 The Certificate Generator project consists of the following files and folders:
 
