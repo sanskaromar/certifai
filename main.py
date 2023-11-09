@@ -8,6 +8,7 @@ from pptx.util import Inches
 import qrcode
 from PIL import Image
 import comtypes.client
+from memory_profiler import profile
 
 pd.options.mode.chained_assignment = None  # default='warn'
 input_pptx = "certificate_template.pptx"
@@ -30,7 +31,7 @@ def PPT_to_PDF(input_pptx, output_pdf):
 
 
 def generate_qr_code(url, output_path):
-    logo_path = "gcp5.png"
+    logo_path = "logo.png"
     logo = Image.open(logo_path)
     basewidth = 100
     wpercent = basewidth / float(logo.size[0])
@@ -51,6 +52,7 @@ def generate_qr_code(url, output_path):
     img.save(output_path)
 
 
+@profile
 def process_pptx(row):
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(pptx_output_folder, exist_ok=True)

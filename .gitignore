@@ -1,10 +1,11 @@
 venv/
 __pycache__/
 certificate_template*.pptx
-data.csv
+data*.csv
 certificates_pdf
 certificates_pptx
 certificates.md
 README.md
 *.png
 qr*.py
+*log*
