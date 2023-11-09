@@ -2,6 +2,7 @@ import os
 import time
 import shutil
 import gc
+import json
 import pandas as pd
 from pptx import Presentation
 from pptx.util import Inches
@@ -10,10 +11,27 @@ from PIL import Image
 import comtypes.client
 from multiprocessing import Pool
 
+
 pd.options.mode.chained_assignment = None  # default='warn'
-input_pptx = "certificate_template.pptx"
+
+
+def load_config(file_path):
+    with open(file_path, "r") as config_file:
+        config = json.load(config_file)
+    return config
+
+
 base_path = os.path.dirname(os.path.abspath(__file__))
-output_folder = os.path.join(base_path, "certificates_pdf")
+config = load_config("config.json")
+
+# Extract configuration options
+input_pptx = config["input_pptx"]
+output_folder = config["output_folder"]
+logo_path = config["logo_path"]
+csv_file = config["csv_file"]
+
+
+output_folder = os.path.join(base_path, output_folder)
 pptx_output_folder = os.path.join(base_path, "certificates_pptx")
 qr_code_folder = os.path.join(base_path, "qr_codes")
 
@@ -30,7 +48,6 @@ def PPT_to_PDF(input_pptx, output_pdf):
 
 
 def generate_qr_code(url, output_path):
-    logo_path = "logo.png"
     logo = Image.open(logo_path)
     basewidth = 100
     wpercent = basewidth / float(logo.size[0])
@@ -91,6 +108,7 @@ def process_pptx(row):
     PPT_to_PDF(updated_pptx, output_pdf)
 
     # print(f"Certificate for {row['name']} has been saved as '{output_pdf}'.")
+    gc.collect()
 
 
 def generate_certificates_summary(df):
@@ -116,7 +134,6 @@ def generate_certificates_summary(df):
 def main():
     start_time = time.time()
     # Load data from CSV file
-    csv_file = "data.csv"
     df = pd.read_csv(csv_file)
     print("Generating Certificates...\nPlease wait...")
 
@@ -135,6 +152,7 @@ def main():
         )
     )
     print("All certificates have been generated.")
+    gc.collect()
 
 
 if __name__ == "__main__":

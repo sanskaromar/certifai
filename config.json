@@ -1,0 +1,6 @@
+{
+    "input_pptx": "certificate_template.pptx",
+    "output_folder": "certificates_pdf",
+    "logo_path": "logo.png",
+    "csv_file": "data.csv"
+}
