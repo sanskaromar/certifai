@@ -1,5 +1,5 @@
 # Certifai: Certificate Generator
-[![Leave a Star](https://img.shields.io/github/stars/sanskaromar/certifai?style=social)](https://github.com/sanskaromar/certifai)
+[![Leave a Star](https://img.shields.io/github/stars/sanskaromar/certifai?style=social)](https://github.com/sanskaromar/certifai) Leave a star if you use it and find it useful. Would mean a lot :) 
 ## Description
 Certifai is a highly customizable Certificate Generator built using Python, designed to streamline the certificate generation process. It automates the creation of certificates in PDF format using a PowerPoint template with predefined placeholders. The script pulls data from a CSV file to populate these placeholders, adds QR codes to the certificates, and generates a summary in Markdown format. One of its standout features is the use of multiprocessing, allowing you to harness the power of parallel processing for faster execution.
 
